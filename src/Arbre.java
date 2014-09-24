@@ -1,5 +1,5 @@
 
-public class Arbre<T extends Comparable> {
+public class Arbre<T extends Comparable<T>> {
 	
 	private Noeud<T> racine;
 	private int ordre;
