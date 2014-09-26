@@ -1,7 +1,26 @@
+package test;
 
-public class Main {
+import static org.junit.Assert.*;
 
-	public static void main(String[] args) {
+import java.util.ArrayList;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import arbreBplus.Noeud;
+
+public class Split {
+
+	/*
+	@Test
+	public void splitRacineFeuille() {
+		
+		
+	}
+	*/
+	
+	@Test
+	public void splitRacineNonFeuille(){
 		Noeud<Integer> noeud = new Noeud<Integer>(2);
 		noeud.setFeuille(true);
 		noeud.getValeur().add(2);
@@ -23,9 +42,6 @@ public class Main {
 		noeud.getPointeur().add(0, noeudf1);
 		noeud.getPointeur().add(1, noeudf2);
 		noeud.getPointeur().add(2, noeudf3);
-
-		
-		noeud.recursiveToString();
 		
 		Noeud<Integer> noeudf4 = new Noeud<Integer>(2, noeud);
 		noeudf4.getValeur().add(7);
@@ -33,20 +49,13 @@ public class Main {
 
 		noeud.getValeur().add(6);
 		noeud.getPointeur().add(3, noeudf4);
-
-		System.out.println("--------------------------------------------");
-		noeud.recursiveToString();
-		System.out.println("--------------------------------------------");
-
 		
 		noeud.split();
-		noeud.recursiveToString();
 
-		/*
-		System.out.println(noeud.toString());
-		System.out.println(noeud.getPointeur().get(0));
-		System.out.println(noeud.getPointeur().get(1));
-		*/
+		ArrayList<Integer> racine = new ArrayList<Integer>();
+		racine.add(4);
+		
+		Assert.assertEquals(racine, noeud.getValeur());
 	}
 
 }

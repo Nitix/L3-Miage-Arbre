@@ -1,3 +1,5 @@
+package arbreBplus;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -17,14 +19,14 @@ public class Noeud<T extends Comparable<T>> {
 	private Noeud<T> pere;
 
 	// Constructeur
-	Noeud(int ordre){
+	public Noeud(int ordre){
 		this.ordre = ordre;
 		this.racine = true;
 		this.id = NEXT_ID;
 		NEXT_ID++;
 	}
 
-	Noeud(int ordre, Noeud<T> pere){
+	public Noeud(int ordre, Noeud<T> pere){
 		this.ordre = ordre;
 		this.pere = pere;
 		this.racine = false;
@@ -34,54 +36,64 @@ public class Noeud<T extends Comparable<T>> {
 
 	// Méthodes 
 	public void split(){
+		int nbvaleur = this.getOrdre() +1;
+		int pair = nbvaleur % 2;
 
 		if(this.isRacine() == true){ //Cas ou je split la racine
-			int nbvaleur = this.getOrdre() +1;
 			Noeud<T> fils1 = new Noeud<T>(this.getOrdre(), this);
 			Noeud<T> fils2 = new Noeud<T>(this.getOrdre(), this);
 
-			int pair = nbvaleur % 2;
-			this.copierValeurDansFils(fils1, fils2, nbvaleur/2+pair);
-
+			this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
+			this.copierValeurDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
+			
+			T valeur = this.valeur.get(nbvaleur/2);
+			this.valeur.clear();
+			this.valeur.add(valeur);
+			
 			fils1.mettreAJourTauxDeRemplissage();
 			fils2.mettreAJourTauxDeRemplissage();
 			
 			if(!this.feuille){
-				this.copierPointeurDansFils(fils1, fils2, nbvaleur/2+pair);
+				this.copierPointeurDansNoeud(fils1, 0, nbvaleur/2+pair);
+				this.copierPointeurDansNoeud(fils2, nbvaleur/2+pair, pointeur.size());
+				this.pointeur.clear();
 			}
 			this.getPointeur().add(0, fils1);
 			this.getPointeur().add(1, fils2);
 		}else{
-			
+			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere);
+			noeudFrere.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
+			noeudFrere.mettreAJourTauxDeRemplissage();
+			this.supprimerPointeur(nbvaleur/2, pointeur.size());
+			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2));
 		}
+		this.mettreAJourTauxDeRemplissage();
 	}
 	
-	private void copierValeurDansFils(Noeud<T> fils1, Noeud<T> fils2, int limit){
-		Iterator<T> it = this.valeur.iterator();
-		int actuel = 0;
-		while(it.hasNext()){
-			T valeur = it.next();
-			if(actuel < limit){
-				if(actuel != limit - 1 ){
-					it.remove();
-					fils1.getValeur().add(valeur);
-				}
-			}else{
-				it.remove();
-				fils2.getValeur().add(valeur);
-			}
-			actuel++;
+	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
+		int index = this.pointeur.indexOf(noeudfilsorigine);
+		this.valeur.add(index-1, valeur);
+		this.pointeur.add(index, noeudfilsorigine);
+		//TODO vérifier overflow
+		//this.verifierOverflow();
+	}
+
+	private void supprimerPointeur(int debut, int fin){
+		for(int i=debut; i<fin; i++){
+			this.pointeur.remove(i);
+		}
+	}
+		
+	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin){
+		for(int i = debut; i < fin; i++){
+			noeud.getValeur().add(this.valeur.get(i));
 		}
 	}
 
-	private void copierPointeurDansFils(Noeud<T> fils1, Noeud<T> fils2, int limit){
-		for(int i = 0; i < limit; i++){
-			fils1.addNoeud(i, this.pointeur.get(i));
+	private void copierPointeurDansNoeud(Noeud<T> noeud, int debut, int fin){
+		for(int i = debut; i < fin; i++){
+			noeud.getPointeur().add(this.pointeur.get(i));
 		}
-		for(int i = limit; i < this.pointeur.size(); i++){
-			fils2.addNoeud(i - limit,this.pointeur.get(i));
-		}
-		this.pointeur.clear();
 	}
 
 	public void addNoeud(int index, Noeud<T> noeud) {
