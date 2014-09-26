@@ -43,7 +43,11 @@ public class Noeud<T extends Comparable<T>> {
 			Noeud<T> fils1 = new Noeud<T>(this.getOrdre(), this);
 			Noeud<T> fils2 = new Noeud<T>(this.getOrdre(), this);
 
-			this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
+			if(this.isFeuille()){
+				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair);
+			}else{
+				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
+			}
 			this.copierValeurDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
 			
 			T valeur = this.valeur.get(nbvaleur/2);
