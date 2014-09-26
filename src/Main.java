@@ -2,7 +2,7 @@
 public class Main {
 
 	public static void main(String[] args) {
-		Noeud<Integer> noeud = new Noeud<Integer>(5);
+		Noeud<Integer> noeud = new Noeud<Integer>(4);
 		noeud.setFeuille(true);
 		noeud.getValeur().add(1);
 		noeud.getValeur().add(2);
