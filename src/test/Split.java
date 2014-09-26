@@ -79,13 +79,13 @@ public class Split {
 		 //doit contenir que 4
 		Assert.assertEquals(racine, noeud.getValeur());  
 		
-		//Contenu dans ses fils, le noeud a crée deux fils
+		//Contenu dans ses fils, le noeud a crÃ©e deux fils
 		Assert.assertFalse(noeud.getPointeur().contains(noeudf1)); 
 		Assert.assertFalse(noeud.getPointeur().contains(noeudf2));
 		Assert.assertFalse(noeud.getPointeur().contains(noeudf3)); 
 		Assert.assertFalse(noeud.getPointeur().contains(noeudf4));
 		
-		//Les parents doivent être idenique pour les deux premiers et les deux derniers et differents entre eux
+		//Les parents doivent Ãªtre idenique pour les deux premiers et les deux derniers et differents entre eux
 		Assert.assertSame(noeudf1.getPere(), noeudf2.getPere());
 		Assert.assertSame(noeudf3.getPere(), noeudf4.getPere());
 		Assert.assertNotSame(noeudf1, noeudf3);	

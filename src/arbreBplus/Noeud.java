@@ -34,7 +34,7 @@ public class Noeud<T extends Comparable<T>> {
 		NEXT_ID++;
 	}
 
-	// Méthodes 
+	// MÃ©thodes 
 	public void split(){
 		int nbvaleur = this.getOrdre() +1;
 		int pair = nbvaleur % 2;
@@ -78,7 +78,7 @@ public class Noeud<T extends Comparable<T>> {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
 		this.valeur.add(index-1, valeur);
 		this.pointeur.add(index, noeudfilsorigine);
-		//TODO vérifier overflow
+		//TODO vÃ©rifier overflow
 		//this.verifierOverflow();
 	}
 
