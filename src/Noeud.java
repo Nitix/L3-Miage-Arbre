@@ -64,8 +64,8 @@ public class Noeud<T extends Comparable<T>> {
 			if(actuel < limit){
 				if(actuel != limit - 1 ){
 					it.remove();
+					fils1.getValeur().add(valeur);
 				}
-				fils1.getValeur().add(valeur);
 			}else{
 				it.remove();
 				fils2.getValeur().add(valeur);
@@ -85,7 +85,7 @@ public class Noeud<T extends Comparable<T>> {
 	}
 
 	public void addNoeud(int index, Noeud<T> noeud) {
-		this.pointeur.set(index, noeud);
+		this.pointeur.add(index, noeud);
 	}
 
 	public void mettreAJourTauxDeRemplissage() {
@@ -172,7 +172,7 @@ public class Noeud<T extends Comparable<T>> {
 		res.append(" -- ");
 		Iterator<Noeud<T>> j = this.pointeur.iterator();
 		while(j.hasNext()){
-			res.append(j.next().getID());
+			res.append("@"+j.next().getID());
 			res.append(" | ");
 		}
 		

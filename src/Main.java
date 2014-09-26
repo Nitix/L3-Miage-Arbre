@@ -19,6 +19,7 @@ public class Main {
 		noeudf3.getValeur().add(5);
 		noeudf3.getValeur().add(6);
 
+		noeud.setFeuille(false);
 		noeud.getPointeur().add(0, noeudf1);
 		noeud.getPointeur().add(1, noeudf2);
 		noeud.getPointeur().add(2, noeudf3);
