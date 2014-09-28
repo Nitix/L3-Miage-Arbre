@@ -12,7 +12,7 @@ public class Arbre<T extends Comparable<T>> {
 		this.ordre = ordre;
 	}
 	
-	public void ajouterData(T data) {
+	public void ajouterData(T data) throws ObjectAlreadyExistsException {
 		this.racine.rechercheBonnePlace(data);
 	}
 	

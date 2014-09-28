@@ -213,7 +213,9 @@ public class Noeud<T extends Comparable<T>> {
 		return res.toString();
 	}
 
-	public void rechercheBonnePlace(T data) {
+	public void rechercheBonnePlace(T data) throws ObjectAlreadyExistsException{
+		if(this.valeur.contains(data))
+			throw new ObjectAlreadyExistsException();
 		boolean trouve = false;
 		for(int i = 0; i < this.valeur.size(); i++){
 			if(this.valeur.get(i).compareTo(data) > 0){

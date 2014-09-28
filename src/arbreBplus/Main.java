@@ -10,8 +10,12 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		while(true){
 			Integer data = sc.nextInt();
-			arbre.ajouterData(data);
-			arbre.recursiveToString();
+			try {
+				arbre.ajouterData(data);
+				arbre.recursiveToString();
+			} catch (ObjectAlreadyExistsException e) {
+				System.out.println("Valeur déjà existante");
+			}
 		}
 	}
 
