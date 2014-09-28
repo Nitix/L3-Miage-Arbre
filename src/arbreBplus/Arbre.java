@@ -11,15 +11,13 @@ public class Arbre<T extends Comparable<T>> {
 		this.racine = new Noeud<T>(ordre);
 		this.ordre = ordre;
 	}
-
-	public Noeud<T> getRacine() {
-		return racine;
+	
+	public void ajouterData(T data) {
+		this.racine.rechercheBonnePlace(data);
 	}
-
-	public void setRacine(Noeud<T> racine) {
-		if(racine == null)
-			throw new NullPointerException("Racine null");
-		this.racine = racine;
+	
+	public void recursiveToString(){
+		this.racine.recursiveToString();
 	}
 
 }

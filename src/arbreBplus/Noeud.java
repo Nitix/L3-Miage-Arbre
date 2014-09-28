@@ -22,6 +22,7 @@ public class Noeud<T extends Comparable<T>> {
 	public Noeud(int ordre){
 		this.ordre = ordre;
 		this.racine = true;
+		this.feuille = true;
 		this.id = NEXT_ID;
 		NEXT_ID++;
 	}
@@ -29,6 +30,7 @@ public class Noeud<T extends Comparable<T>> {
 	public Noeud(int ordre, Noeud<T> pere){
 		this.ordre = ordre;
 		this.pere = pere;
+		this.feuille = false;
 		this.racine = false;
 		this.id = NEXT_ID;
 		NEXT_ID++;
@@ -45,6 +47,8 @@ public class Noeud<T extends Comparable<T>> {
 
 			if(this.isFeuille()){
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair);
+				fils1.setFeuille(true);
+				fils2.setFeuille(true);
 			}else{
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
 			}
@@ -61,6 +65,8 @@ public class Noeud<T extends Comparable<T>> {
 				this.copierPointeurDansNoeud(fils1, 0, nbvaleur/2+pair);
 				this.copierPointeurDansNoeud(fils2, nbvaleur/2+pair, pointeur.size());
 				this.pointeur.clear();
+			}else{
+				this.setFeuille(false);
 			}
 			this.getPointeur().add(0, fils1);
 			this.getPointeur().add(1, fils2);
@@ -85,9 +91,6 @@ public class Noeud<T extends Comparable<T>> {
 		this.valeur.add(index, valeur);
 		this.pointeur.add(index+1, noeudfils);
 		this.mettreAJourTauxDeRemplissage();
-		if(tauxremplissage> 1){
-			this.split();
-		}
 	}
 
 	private void supprimerPointeur(int debut, int fin){
@@ -113,7 +116,10 @@ public class Noeud<T extends Comparable<T>> {
 	}
 
 	public void mettreAJourTauxDeRemplissage() {
-		this.tauxremplissage = this.valeur.size() / this.ordre;
+		this.tauxremplissage = (double) this.valeur.size() / this.ordre;
+		if(tauxremplissage> 1){
+			this.split();
+		}
 	}
 
 	public int getID(){
@@ -199,8 +205,33 @@ public class Noeud<T extends Comparable<T>> {
 			res.append("@"+j.next().getID());
 			res.append(" | ");
 		}
-		
+		res.append("  --- T = ");
+		res.append(this.tauxremplissage);
 		return res.toString();
+	}
+
+	public void rechercheBonnePlace(T data) {
+		boolean trouve = false;
+		for(int i = 0; i < this.valeur.size(); i++){
+			if(this.valeur.get(i).compareTo(data) > 0){
+				trouve = true;
+				if(this.isFeuille()){
+					this.valeur.add(i, data);
+					this.mettreAJourTauxDeRemplissage();
+				}else{
+					this.pointeur.get(i).rechercheBonnePlace(data);
+				}
+				break;
+			}
+		}
+		if(!trouve){
+			if(this.isFeuille()){
+				this.valeur.add(data);
+				this.mettreAJourTauxDeRemplissage();
+			}else{
+				this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
+			}
+		}
 	}
 
 }
