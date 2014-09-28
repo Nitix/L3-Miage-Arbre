@@ -201,9 +201,12 @@ public class Noeud<T extends Comparable<T>> {
 		}
 		res.append(" -- ");
 		Iterator<Noeud<T>> j = this.pointeur.iterator();
-		while(j.hasNext()){
+		if(j.hasNext()){
 			res.append("@"+j.next().getID());
+		}
+		while(j.hasNext()){
 			res.append(" | ");
+			res.append("@"+j.next().getID());
 		}
 		res.append("  --- T = ");
 		res.append(this.tauxremplissage);
