@@ -1,7 +1,5 @@
 package test;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 
 import org.junit.Assert;
@@ -9,10 +7,10 @@ import org.junit.Test;
 
 import arbreBplus.Noeud;
 
-public class Split {
-
+public class SplitRacine {
+	
 	@Test
-	public void splitRacineFeuille() {
+	public void splitFeuille() {
 		Noeud<Integer> noeud = new Noeud<Integer>(2);
 		noeud.setFeuille(true);
 		noeud.getValeur().add(1);
@@ -40,7 +38,7 @@ public class Split {
 	}
 	
 	@Test
-	public void splitRacineNonFeuille(){
+	public void splitNonFeuille(){
 		Noeud<Integer> noeud = new Noeud<Integer>(2);
 		noeud.getValeur().add(2);
 		noeud.getValeur().add(4);
@@ -101,5 +99,4 @@ public class Split {
 		Assert.assertEquals(noeudFR2, noeud.getPointeur().get(1).getValeur());  
 
 	}
-
 }

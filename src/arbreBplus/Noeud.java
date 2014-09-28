@@ -66,9 +66,15 @@ public class Noeud<T extends Comparable<T>> {
 			this.getPointeur().add(1, fils2);
 		}else{
 			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere);
-			noeudFrere.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
+			this.copierValeurDansNoeud(noeudFrere,nbvaleur/2+pair , nbvaleur);
+			this.valeur.subList(nbvaleur/2+pair, nbvaleur).clear();
 			noeudFrere.mettreAJourTauxDeRemplissage();
-			this.supprimerPointeur(nbvaleur/2, pointeur.size());
+			if(!this.isFeuille()){
+				this.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
+				this.supprimerPointeur(nbvaleur/2, pointeur.size());
+			}else{
+				noeudFrere.setFeuille(true);
+			}
 			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2));
 		}
 		this.mettreAJourTauxDeRemplissage();
@@ -76,10 +82,12 @@ public class Noeud<T extends Comparable<T>> {
 	
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
-		this.valeur.add(index-1, valeur);
-		this.pointeur.add(index, noeudfilsorigine);
-		//TODO vérifier overflow
-		//this.verifierOverflow();
+		this.valeur.add(index, valeur);
+		this.pointeur.add(index+1, noeudfils);
+		this.mettreAJourTauxDeRemplissage();
+		if(tauxremplissage> 1){
+			this.split();
+		}
 	}
 
 	private void supprimerPointeur(int debut, int fin){
