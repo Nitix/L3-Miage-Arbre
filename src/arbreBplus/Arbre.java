@@ -20,4 +20,10 @@ public class Arbre<T extends Comparable<T>> {
 		this.racine.recursiveToString();
 	}
 
+	public double calculTaux() {
+		Taux taux = new Taux();
+		racine.getTauxRecursive(taux);
+		return taux.getTaux();
+	}
+
 }

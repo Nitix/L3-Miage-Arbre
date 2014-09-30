@@ -54,7 +54,7 @@ public class Noeud<T extends Comparable<T>> {
 			}
 			this.copierValeurDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
 			
-			T valeur = this.valeur.get(nbvaleur/2);
+			T valeur = this.valeur.get(nbvaleur/2-1+pair);
 			this.valeur.clear();
 			this.valeur.add(valeur);
 			
@@ -77,26 +77,26 @@ public class Noeud<T extends Comparable<T>> {
 			noeudFrere.mettreAJourTauxDeRemplissage();
 			if(!this.isFeuille()){
 				this.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
-				this.supprimerPointeur(nbvaleur/2, pointeur.size());
+				this.supprimerPointeur(nbvaleur/2+pair, pointeur.size());
 			}else{
 				noeudFrere.setFeuille(true);
 			}
-			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2));
+			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2-1+pair));  //FIXME Erreur avec ordre 3
 		}
 		this.mettreAJourTauxDeRemplissage();
 	}
 	
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
-		this.valeur.add(index, valeur);
+		if(index == -1)
+			System.out.println("CRASH");
+		this.valeur.add(index, valeur);   //FIXME provoque des erreurs -- Problème de réference Père
 		this.pointeur.add(index+1, noeudfils);
 		this.mettreAJourTauxDeRemplissage();
 	}
 
 	private void supprimerPointeur(int debut, int fin){
-		for(int i=debut; i<fin; i++){
-			this.pointeur.remove(i);
-		}
+		this.pointeur.subList(debut, fin).clear();
 	}
 		
 	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin){
@@ -107,7 +107,9 @@ public class Noeud<T extends Comparable<T>> {
 
 	private void copierPointeurDansNoeud(Noeud<T> noeud, int debut, int fin){
 		for(int i = debut; i < fin; i++){
-			noeud.getPointeur().add(this.pointeur.get(i));
+			Noeud<T> filsOrigine = this.pointeur.get(i);
+			noeud.getPointeur().add(filsOrigine);
+			filsOrigine.setPere(noeud);
 		}
 	}
 
@@ -216,9 +218,10 @@ public class Noeud<T extends Comparable<T>> {
 	public void rechercheBonnePlace(T data) throws ObjectAlreadyExistsException{
 		if(this.valeur.contains(data))
 			throw new ObjectAlreadyExistsException();
+			
 		boolean trouve = false;
 		for(int i = 0; i < this.valeur.size(); i++){
-			if(this.valeur.get(i).compareTo(data) > 0){
+			if(this.valeur.get(i).compareTo(data) >= 0){
 				trouve = true;
 				if(this.isFeuille()){
 					this.valeur.add(i, data);
@@ -237,6 +240,13 @@ public class Noeud<T extends Comparable<T>> {
 				this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
 			}
 		}
+	}
+
+	public void getTauxRecursive(Taux taux) {
+		for(int i = 0; i < this.pointeur.size(); i++){
+			this.pointeur.get(i).getTauxRecursive(taux);
+		}
+		taux.addTaux(tauxremplissage);
 	}
 
 }
