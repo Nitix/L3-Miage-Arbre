@@ -68,6 +68,9 @@ public class Main {
 				System.out.println("Taux de remplissage : " + arbre.calculTaux());
 				break;
 			case 4 :
+				System.out.println("Valeur à supprimer : ");
+				Integer valsupp = sc.nextInt();
+				arbre.supprimerData(valsupp);// FIXME si pas bon
 				break;
 			case 5 : 
 				sortie = true;

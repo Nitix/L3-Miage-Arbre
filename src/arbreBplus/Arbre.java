@@ -16,6 +16,10 @@ public class Arbre<T extends Comparable<T>> {
 		this.racine.rechercheBonnePlace(data);
 	}
 	
+	public void supprimerData(T data){
+		this.racine.rechercheBonneValeur(data);//FIXME Supp
+	}
+	
 	public void recursiveToString(){
 		this.racine.recursiveToString();
 	}
