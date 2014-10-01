@@ -3,7 +3,16 @@ package arbreBplus;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
+/**
+ * Class Noeud permet de structurer l'arbre, un noued est chaque cellule d'un arbre. Il comporte une liste de valeurs, 
+ * et une listes de pointeurs pour les noeuds fils
+ * 
+ * Il esy défini par un ordre qui donne le nombre de valeur que peut contenir un Noeud
+ * 
+ * @author Pierson Guillaume, Hugo Yohann
+ *
+ * @param <T> type d'index, il faut qu'il implemente l'interface Comparable pour pourvoir les trier
+ */
 public class Noeud<T extends Comparable<T>> {
 
 	// Attributs
