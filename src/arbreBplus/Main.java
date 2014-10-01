@@ -1,12 +1,9 @@
 package arbreBplus;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -44,8 +41,6 @@ public class Main {
 							System.out.println("Valeur déjà existante.");
 						}
 					}
-					arbre.recursiveToString();
-					System.out.println("Taux de remplissage : " + arbre.calculTaux());
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

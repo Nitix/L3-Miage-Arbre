@@ -17,7 +17,7 @@ public class Noeud<T extends Comparable<T>> {
 
 	// Attributs
 	private static int NEXT_ID = 0;
-	
+
 	private int id;  //utile pour le toString
 	private int ordre;
 	private double tauxremplissage = 0;
@@ -62,14 +62,14 @@ public class Noeud<T extends Comparable<T>> {
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
 			}
 			this.copierValeurDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
-			
+
 			T valeur = this.valeur.get(nbvaleur/2-1+pair);
 			this.valeur.clear();
 			this.valeur.add(valeur);
-			
+
 			fils1.mettreAJourTauxDeRemplissage();
 			fils2.mettreAJourTauxDeRemplissage();
-			
+
 			if(!this.feuille){
 				this.copierPointeurDansNoeud(fils1, 0, nbvaleur/2+pair);
 				this.copierPointeurDansNoeud(fils2, nbvaleur/2+pair, pointeur.size());
@@ -94,7 +94,7 @@ public class Noeud<T extends Comparable<T>> {
 		}
 		this.mettreAJourTauxDeRemplissage();
 	}
-	
+
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
 		if(index == -1)
@@ -107,7 +107,7 @@ public class Noeud<T extends Comparable<T>> {
 	private void supprimerPointeur(int debut, int fin){
 		this.pointeur.subList(debut, fin).clear();
 	}
-		
+
 	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin){
 		for(int i = debut; i < fin; i++){
 			noeud.getValeur().add(this.valeur.get(i));
@@ -136,7 +136,7 @@ public class Noeud<T extends Comparable<T>> {
 	public int getID(){
 		return this.id;
 	}
-	
+
 	// Getter & Setter
 	public int getOrdre() {
 		return ordre;
@@ -193,7 +193,7 @@ public class Noeud<T extends Comparable<T>> {
 	public void setPere(Noeud<T> pere) {
 		this.pere = pere;
 	}
-	
+
 	public void recursiveToString(){
 		System.out.println(this.toString());
 		Iterator<Noeud<T>> it = this.pointeur.iterator();
@@ -201,7 +201,7 @@ public class Noeud<T extends Comparable<T>> {
 			it.next().recursiveToString();
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder res = new StringBuilder("@" + this.id + " :: | ");
@@ -227,7 +227,7 @@ public class Noeud<T extends Comparable<T>> {
 	public void rechercheBonnePlace(T data) throws ObjectAlreadyExistsException{
 		if(this.valeur.contains(data))
 			throw new ObjectAlreadyExistsException();
-			
+
 		boolean trouve = false;
 		for(int i = 0; i < this.valeur.size(); i++){
 			if(this.valeur.get(i).compareTo(data) >= 0){
