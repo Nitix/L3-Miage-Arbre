@@ -97,11 +97,31 @@ public class Noeud<T extends Comparable<T>> {
 		this.mettreAJourTauxDeRemplissage();
 	}
 
+	public void fusion(){
+		Noeud<T> pere = this.getPere();
+		ArrayList<Noeud<T>> brothers = pere.getPointeur();
+		int index = brothers.indexOf(this);
+		if(index>0){
+			Noeud<T> brother = brothers.get(index-1);
+			this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
+			brother.mettreAJourTauxDeRemplissage();
+			brothers.remove(index);
+			pere.getValeur().remove(index-1);
+			pere.mettreAJourTauxDeRemplissage();
+		}else{
+			Noeud<T> brother = brothers.get(index+1);
+			this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
+			brother.mettreAJourTauxDeRemplissage();
+			brothers.remove(index);
+			pere.getValeur().remove(index);
+			pere.mettreAJourTauxDeRemplissage();
+		}
+
+	}
+	
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
-		if(index == -1)
-			System.out.println("CRASH");
-		this.valeur.add(index, valeur);   //FIXME provoque des erreurs -- Problème de réference Père
+		this.valeur.add(index, valeur);  
 		this.pointeur.add(index+1, noeudfils);
 		this.mettreAJourTauxDeRemplissage();
 	}
@@ -251,6 +271,24 @@ public class Noeud<T extends Comparable<T>> {
 			}
 		}
 	}
+	
+	public void rechercheBonneValeur(T data){ //FIXME une seule méthode de recherche pour la méthode ajout/supp
+		boolean trouve = false;
+		for(int i = 0; i < this.valeur.size(); i++){
+			if(this.valeur.get(i).compareTo(data) >= 0){
+				trouve = true;
+				this.valeur.remove(this.valeur.indexOf(data));
+				this.mettreAJourTauxDeRemplissage();
+				if(this.getTauxremplissage() <0.5){
+					System.out.println("Appel a Fusion");
+				}
+			}
+		}
+		if(!trouve){
+			this.pointeur.get(this.pointeur.size()-1).rechercheBonneValeur(data);
+		}
+	}
+
 
 	public void getTauxRecursive(Taux taux) {
 		for(int i = 0; i < this.pointeur.size(); i++){

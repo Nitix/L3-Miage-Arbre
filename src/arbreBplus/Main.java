@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class Main {
 
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		Scanner sc= new Scanner(System.in);
 		System.out.println("Donner l'ordre de vos arbres : ");
@@ -80,7 +79,10 @@ public class Main {
 				nom.recursiveToString();
 				System.out.println("Taux de remplissage : " + nom.calculTaux());				
 				break;
-			case 5 :
+			case 3 :
+				System.out.println("Valeur à supprimer : ");
+				Integer valsupp = sc.nextInt();
+				//arbre.supprimerData(valsupp);// FIXME si pas bon
 				break;
 			case 4 : 
 				sortie = true;
