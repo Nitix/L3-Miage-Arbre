@@ -3,6 +3,8 @@ package arbreBplus;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+//TODO FIXME Lors de la suppression il faut enlever les références de l'ancienne valeur des les noeuds non feuilles
+
 /**
  * Class Noeud permet de structurer l'arbre, un noued est chaque cellule d'un arbre. Il comporte une liste de valeurs, 
  * et une listes de pointeurs pour les noeuds fils
@@ -227,7 +229,6 @@ public class Noeud<T extends Comparable<T>> {
 	public void rechercheBonnePlace(T data) throws ObjectAlreadyExistsException{
 		if(this.valeur.contains(data))
 			throw new ObjectAlreadyExistsException();
-
 		boolean trouve = false;
 		for(int i = 0; i < this.valeur.size(); i++){
 			if(this.valeur.get(i).compareTo(data) >= 0){
