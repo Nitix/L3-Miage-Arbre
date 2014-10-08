@@ -52,7 +52,7 @@ public class Main {
 											Integer data = Integer.parseInt(info[1]);
 											age.ajouterData(data);
 										}										
-									} catch (ObjectAlreadyExistsException e) {
+									} catch (ObjectAlreadyExistsException | NoeudNonFeuilleException e) {
 										System.out.println("Valeur déjà existante.");
 									}
 								}
@@ -76,7 +76,12 @@ public class Main {
 			case 3 :
 				System.out.println("Valeur à supprimer : ");
 				Integer valsupp = sc.nextInt();
-				//arbre.supprimerData(valsupp);// FIXME si pas bon
+				try {
+					age.supprimerData(valsupp); // FIXME si pas bon
+				} catch (NoeudNonFeuilleException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			case 4 : 
 				sortie = true;

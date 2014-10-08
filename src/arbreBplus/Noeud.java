@@ -69,9 +69,6 @@ public class Noeud<T extends Comparable<T>> {
 			this.valeur.clear();
 			this.valeur.add(valeur);
 
-			fils1.mettreAJourTauxDeRemplissage();
-			fils2.mettreAJourTauxDeRemplissage();
-
 			if(!this.feuille){
 				this.copierPointeurDansNoeud(fils1, 0, nbvaleur/2+pair);
 				this.copierPointeurDansNoeud(fils2, nbvaleur/2+pair, pointeur.size());
@@ -81,40 +78,62 @@ public class Noeud<T extends Comparable<T>> {
 			}
 			this.getPointeur().add(0, fils1);
 			this.getPointeur().add(1, fils2);
+			
+			fils1.mettreAJourTauxDeRemplissage();
+			fils2.mettreAJourTauxDeRemplissage();
+			fils1.checkSplit();
+			fils2.checkSplit();
 		}else{
 			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere);
 			this.copierValeurDansNoeud(noeudFrere,nbvaleur/2+pair , nbvaleur);
 			this.valeur.subList(nbvaleur/2+pair, nbvaleur).clear();
-			noeudFrere.mettreAJourTauxDeRemplissage();
 			if(!this.isFeuille()){
 				this.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
 				this.supprimerPointeur(nbvaleur/2+pair, pointeur.size());
 			}else{
 				noeudFrere.setFeuille(true);
 			}
-			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2-1+pair));  //FIXME Erreur avec ordre 3
+			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2-1+pair)); 
+			pere.mettreAJourTauxDeRemplissage();
+			pere.checkSplit();
+			noeudFrere.mettreAJourTauxDeRemplissage();
+			noeudFrere.checkSplit();
 		}
 		this.mettreAJourTauxDeRemplissage();
 	}
 
+	private void checkSplit() {
+		if(this.tauxremplissage > 1)
+			this.split();
+	}
+	
+	private void checkFusion(){
+		if(this.tauxremplissage < 0.5)
+			this.fusion();
+	}
+
 	public void fusion(){
-		Noeud<T> pere = this.getPere();
-		ArrayList<Noeud<T>> brothers = pere.getPointeur();
-		int index = brothers.indexOf(this);
-		if(index>0){
-			Noeud<T> brother = brothers.get(index-1);
-			this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
-			brother.mettreAJourTauxDeRemplissage();
-			brothers.remove(index);
-			pere.getValeur().remove(index-1);
-			pere.mettreAJourTauxDeRemplissage();
-		}else{
-			Noeud<T> brother = brothers.get(index+1);
-			this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
-			brother.mettreAJourTauxDeRemplissage();
-			brothers.remove(index);
-			pere.getValeur().remove(index);
-			pere.mettreAJourTauxDeRemplissage();
+		if(!this.isRacine()){
+			Noeud<T> pere = this.getPere();
+			ArrayList<Noeud<T>> brothers = pere.getPointeur();
+			int index = brothers.indexOf(this);
+			if(index>0){
+				Noeud<T> brother = brothers.get(index-1);
+				this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
+				brother.mettreAJourTauxDeRemplissage();
+				brothers.remove(index);
+				pere.getValeur().remove(index-1);
+				pere.mettreAJourTauxDeRemplissage();
+				pere.checkFusion();
+			}else{
+				Noeud<T> brother = brothers.get(index+1);
+				this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
+				brother.mettreAJourTauxDeRemplissage();
+				brothers.remove(index);
+				pere.getValeur().remove(index);
+				pere.mettreAJourTauxDeRemplissage();
+				pere.checkFusion();
+			}
 		}
 
 	}
@@ -123,7 +142,6 @@ public class Noeud<T extends Comparable<T>> {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
 		this.valeur.add(index, valeur);  
 		this.pointeur.add(index+1, noeudfils);
-		this.mettreAJourTauxDeRemplissage();
 	}
 
 	private void supprimerPointeur(int debut, int fin){
@@ -150,9 +168,6 @@ public class Noeud<T extends Comparable<T>> {
 
 	public void mettreAJourTauxDeRemplissage() {
 		this.tauxremplissage = (double) this.valeur.size() / this.ordre;
-		if(tauxremplissage> 1){
-			this.split();
-		}
 	}
 
 	public int getID(){
@@ -246,7 +261,7 @@ public class Noeud<T extends Comparable<T>> {
 		return res.toString();
 	}
 
-	public void rechercheBonnePlace(T data) throws ObjectAlreadyExistsException{
+	public void add(T data) throws ObjectAlreadyExistsException, NoeudNonFeuilleException{
 		if(this.valeur.contains(data))
 			throw new ObjectAlreadyExistsException();
 		boolean trouve = false;
@@ -256,8 +271,9 @@ public class Noeud<T extends Comparable<T>> {
 				if(this.isFeuille()){
 					this.valeur.add(i, data);
 					this.mettreAJourTauxDeRemplissage();
+					this.checkSplit();
 				}else{
-					this.pointeur.get(i).rechercheBonnePlace(data);
+					throw new NoeudNonFeuilleException();
 				}
 				break;
 			}
@@ -266,29 +282,52 @@ public class Noeud<T extends Comparable<T>> {
 			if(this.isFeuille()){
 				this.valeur.add(data);
 				this.mettreAJourTauxDeRemplissage();
+				this.checkSplit();
 			}else{
-				this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
+				throw new NoeudNonFeuilleException();
 			}
 		}
 	}
 	
-	public void rechercheBonneValeur(T data){ //FIXME une seule méthode de recherche pour la méthode ajout/supp
-		boolean trouve = false;
+	public Noeud<T> rechercheBonnePlace(T data){ //FIXME une seule méthode de recherche pour la méthode ajout/supp
+		if(this.isFeuille())
+			return this;
 		for(int i = 0; i < this.valeur.size(); i++){
 			if(this.valeur.get(i).compareTo(data) >= 0){
-				trouve = true;
-				this.valeur.remove(this.valeur.indexOf(data));
-				this.mettreAJourTauxDeRemplissage();
-				if(this.getTauxremplissage() <0.5){
-					System.out.println("Appel a Fusion");
-				}
+				return this.pointeur.get(i).rechercheBonnePlace(data);
 			}
 		}
-		if(!trouve){
-			this.pointeur.get(this.pointeur.size()-1).rechercheBonneValeur(data);
+		return this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
+	}
+	
+	public void remove(T data) throws NoeudNonFeuilleException{
+		for(int i = 0; i < this.valeur.size(); i++){
+			if(this.valeur.get(i).compareTo(data) == 0){
+				if(this.isFeuille()){
+					this.valeur.remove(i);
+					if(i != 0){
+						pere.rempaceOccurenceOf(data, this.valeur.get(i-1));
+						this.mettreAJourTauxDeRemplissage();
+						this.checkFusion();
+					}
+				}else{
+					throw new NoeudNonFeuilleException();
+				}
+				break;
+			}
 		}
 	}
 
+
+	private void rempaceOccurenceOf(T data, T t) {
+		int index = this.valeur.indexOf(data);
+		if(index  != -1){
+			this.valeur.remove(index);
+			this.valeur.add(index, t);
+		}
+		if(!this.racine)
+			pere.rempaceOccurenceOf(data, t);
+	}
 
 	public void getTauxRecursive(Taux taux) {
 		for(int i = 0; i < this.pointeur.size(); i++){
@@ -297,4 +336,11 @@ public class Noeud<T extends Comparable<T>> {
 		taux.addTaux(tauxremplissage);
 	}
 
+	
+	private void debug(){
+		if(this.isRacine())
+			this.recursiveToString();
+		else
+			pere.debug();
+	}
 }

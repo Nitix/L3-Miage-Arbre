@@ -12,12 +12,14 @@ public class Arbre<T extends Comparable<T>> {
 		this.ordre = ordre;
 	}
 
-	public void ajouterData(T data) throws ObjectAlreadyExistsException {
-		this.racine.rechercheBonnePlace(data);
+	public void ajouterData(T data) throws ObjectAlreadyExistsException, NoeudNonFeuilleException {
+		Noeud<T> noeud = this.racine.rechercheBonnePlace(data);
+		noeud.add(data);
 	}
 
-	public void supprimerData(T data){
-		this.racine.rechercheBonneValeur(data);//FIXME Supp
+	public void supprimerData(T data) throws NoeudNonFeuilleException{
+		Noeud<T> noeud = this.racine.rechercheBonnePlace(data);
+		noeud.remove(data);
 	}
 	
 	public void recursiveToString(){
