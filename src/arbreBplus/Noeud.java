@@ -111,8 +111,14 @@ public class Noeud<T extends Comparable<T>> {
 	}
 	
 	private void checkFusion(){
-		if(this.valeur.size() + 1 < (this.ordre+1)/2)
-			this.fusion();			
+		if(this.isFeuille()){
+			if(this.valeur.size() < (this.ordre+1)/2)
+				this.fusion();	
+		}else{
+			if(this.pointeur.size() <(int) Math.round( (double)((this.ordre+1)/2)))
+				this.fusion();	
+		}
+		
 	}
 
 	public void fusion(){
@@ -122,15 +128,16 @@ public class Noeud<T extends Comparable<T>> {
 			if(index>0){
 				brother = this.pere.getPointeur().get(index-1);
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size());
+				pere.getValeur().remove(index-1);
 			}else{
 				brother = this.pere.getPointeur().get(index+1);
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size(), 0);
+				pere.getValeur().remove(index);
 			}
 			brother.mettreAJourTauxDeRemplissage();
 			this.pere.getPointeur().remove(index);
-			pere.getValeur().remove(index-1);
 			pere.mettreAJourTauxDeRemplissage();
-			brother.split();
+			brother.checkSplit();
 			pere.checkFusion();
 		}
 
@@ -313,9 +320,9 @@ public class Noeud<T extends Comparable<T>> {
 					this.valeur.remove(i);
 					if(i != 0){
 						pere.remplaceOccurenceOf(data, this.valeur.get(i-1));
-						this.mettreAJourTauxDeRemplissage();
-						this.checkFusion();
 					}
+					this.mettreAJourTauxDeRemplissage();
+					this.checkFusion();
 				}else{
 					throw new NoeudNonFeuilleException();
 				}

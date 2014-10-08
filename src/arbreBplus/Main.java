@@ -20,6 +20,7 @@ public class Main {
 		Arbre<String> nom = new Arbre<>(ordre);
 		
 		boolean sortie = false;
+		/*
 		while(!sortie){
 			System.out.println("Actions faisables : \n"
 					+ "1 - Charger un Fichier.\n"
@@ -47,7 +48,7 @@ public class Main {
 										String[] info = text.split(":");
 										String type = info[0].toLowerCase();
 										if(type.equals("nom")){
-											//nom.ajouterData(info[1]);
+											nom.ajouterData(info[1]);
 										}else{
 											Integer data = Integer.parseInt(info[1]);
 											age.ajouterData(data);
@@ -70,8 +71,8 @@ public class Main {
 			case 2 :
 				age.recursiveToString();
 				System.out.println("Taux de remplissage : " + age.calculTaux());
-				//nom.recursiveToString();
-				//System.out.println("Taux de remplissage : " + nom.calculTaux());				
+				nom.recursiveToString();
+				System.out.println("Taux de remplissage : " + nom.calculTaux());				
 				break;
 			case 3 :
 				System.out.println("Valeur à supprimer : ");
@@ -87,6 +88,53 @@ public class Main {
 				sortie = true;
 				break;
 			}
+		} */
+		
+		System.out.println("Inserer le nom de dossier dans lesquels sont contenus vos valeurs.");
+		String dossierString = sc.next();
+		try {
+			final File dossier = new File(dossierString);
+			if(dossier.isDirectory()){
+				for(File file : dossier.listFiles()){
+					if(file.isFile()){
+						FileReader fis = new FileReader(file.getAbsoluteFile());
+						BufferedReader br = new BufferedReader(fis);
+						String text;
+						while((text= br.readLine()) != null){
+							try {
+								text = text.trim();
+								String[] info = text.split(":");
+								String type = info[0].toLowerCase();
+								if(type.equals("nom")){
+								//s	nom.ajouterData(info[1]);
+								}else{
+									Integer data = Integer.parseInt(info[1]);
+									age.ajouterData(data);
+								}										
+							} catch (ObjectAlreadyExistsException | NoeudNonFeuilleException e) {
+								System.out.println("Valeur déjà existante.");
+							}
+						}
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		while(true){
+		Integer valsupp = sc.nextInt();
+		try {
+			age.supprimerData(valsupp); // FIXME si pas bon
+			age.recursiveToString();
+			System.out.println("Taux de remplissage : " + age.calculTaux());
+		} catch (NoeudNonFeuilleException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		}
 	}
 
