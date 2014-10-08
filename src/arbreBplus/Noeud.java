@@ -85,15 +85,18 @@ public class Noeud<T extends Comparable<T>> {
 			fils2.checkSplit();
 		}else{
 			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere);
+			T valeur = this.getValeur().get(nbvaleur/2-1+pair);
 			this.copierValeurDansNoeud(noeudFrere,nbvaleur/2+pair , nbvaleur);
-			this.valeur.subList(nbvaleur/2+pair, nbvaleur).clear();
 			if(!this.isFeuille()){
 				this.copierPointeurDansNoeud(noeudFrere, nbvaleur/2+pair, pointeur.size());
 				this.supprimerPointeur(nbvaleur/2+pair, pointeur.size());
+				this.valeur.subList(nbvaleur/2+pair-1, nbvaleur).clear();
 			}else{
 				noeudFrere.setFeuille(true);
+				this.valeur.subList(nbvaleur/2+pair, nbvaleur).clear();
 			}
-			pere.ajouter(noeudFrere, this, this.getValeur().get(nbvaleur/2-1+pair)); 
+			this.mettreAJourTauxDeRemplissage();
+			pere.ajouter(noeudFrere, this, valeur); 
 			pere.mettreAJourTauxDeRemplissage();
 			pere.checkSplit();
 			noeudFrere.mettreAJourTauxDeRemplissage();
@@ -309,27 +312,26 @@ public class Noeud<T extends Comparable<T>> {
 				if(this.isFeuille()){
 					this.valeur.remove(i);
 					if(i != 0){
-						pere.rempaceOccurenceOf(data, this.valeur.get(i-1));
+						pere.remplaceOccurenceOf(data, this.valeur.get(i-1));
 						this.mettreAJourTauxDeRemplissage();
 						this.checkFusion();
 					}
 				}else{
 					throw new NoeudNonFeuilleException();
 				}
-				break;
 			}
 		}
 	}
 
 
-	private void rempaceOccurenceOf(T data, T t) {
+	private void remplaceOccurenceOf(T data, T t) {
 		int index = this.valeur.indexOf(data);
 		if(index  != -1){
 			this.valeur.remove(index);
 			this.valeur.add(index, t);
 		}
 		if(!this.racine)
-			pere.rempaceOccurenceOf(data, t);
+			pere.remplaceOccurenceOf(data, t);
 	}
 
 	public void getTauxRecursive(Taux taux) {

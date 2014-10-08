@@ -47,7 +47,7 @@ public class Main {
 										String[] info = text.split(":");
 										String type = info[0].toLowerCase();
 										if(type.equals("nom")){
-											nom.ajouterData(info[1]);
+											//nom.ajouterData(info[1]);
 										}else{
 											Integer data = Integer.parseInt(info[1]);
 											age.ajouterData(data);
@@ -70,8 +70,8 @@ public class Main {
 			case 2 :
 				age.recursiveToString();
 				System.out.println("Taux de remplissage : " + age.calculTaux());
-				nom.recursiveToString();
-				System.out.println("Taux de remplissage : " + nom.calculTaux());				
+				//nom.recursiveToString();
+				//System.out.println("Taux de remplissage : " + nom.calculTaux());				
 				break;
 			case 3 :
 				System.out.println("Valeur à supprimer : ");
