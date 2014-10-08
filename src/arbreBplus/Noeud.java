@@ -108,36 +108,31 @@ public class Noeud<T extends Comparable<T>> {
 	}
 	
 	private void checkFusion(){
-		if(this.tauxremplissage < 0.5)
-			this.fusion();
+		if(this.valeur.size() + 1 < (this.ordre+1)/2)
+			this.fusion();			
 	}
 
 	public void fusion(){
 		if(!this.isRacine()){
-			Noeud<T> pere = this.getPere();
-			ArrayList<Noeud<T>> brothers = pere.getPointeur();
-			int index = brothers.indexOf(this);
+			int index = this.pere.getPointeur().indexOf(this);
+			Noeud<T> brother;
 			if(index>0){
-				Noeud<T> brother = brothers.get(index-1);
-				this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
-				brother.mettreAJourTauxDeRemplissage();
-				brothers.remove(index);
-				pere.getValeur().remove(index-1);
-				pere.mettreAJourTauxDeRemplissage();
-				pere.checkFusion();
+				brother = this.pere.getPointeur().get(index-1);
+				this.copierValeurDansNoeud(brother, 0, this.getValeur().size());
 			}else{
-				Noeud<T> brother = brothers.get(index+1);
-				this.copierValeurDansNoeud(brother, brother.getValeur().size(), brother.getValeur().size()+this.getValeur().size());
-				brother.mettreAJourTauxDeRemplissage();
-				brothers.remove(index);
-				pere.getValeur().remove(index);
-				pere.mettreAJourTauxDeRemplissage();
-				pere.checkFusion();
+				brother = this.pere.getPointeur().get(index+1);
+				this.copierValeurDansNoeud(brother, 0, this.getValeur().size(), 0);
 			}
+			brother.mettreAJourTauxDeRemplissage();
+			this.pere.getPointeur().remove(index);
+			pere.getValeur().remove(index-1);
+			pere.mettreAJourTauxDeRemplissage();
+			brother.split();
+			pere.checkFusion();
 		}
 
 	}
-	
+
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
 		this.valeur.add(index, valeur);  
@@ -151,6 +146,14 @@ public class Noeud<T extends Comparable<T>> {
 	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin){
 		for(int i = debut; i < fin; i++){
 			noeud.getValeur().add(this.valeur.get(i));
+		}
+	}
+	
+	
+	public void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin, int initialIndex) {
+		for(int i = debut; i < fin; i++){
+			noeud.getValeur().add(initialIndex, this.valeur.get(i));
+			initialIndex++;
 		}
 	}
 
