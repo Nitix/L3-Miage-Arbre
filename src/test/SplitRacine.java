@@ -11,7 +11,7 @@ public class SplitRacine {
 	
 	@Test
 	public void splitFeuille() {
-		Noeud<Integer> noeud = new Noeud<Integer>(2);
+		Noeud<Integer> noeud = new Noeud<Integer>(2, null);
 		noeud.setFeuille(true);
 		noeud.getValeur().add(1);
 		noeud.getValeur().add(2);
@@ -39,19 +39,19 @@ public class SplitRacine {
 	
 	@Test
 	public void splitNonFeuille(){
-		Noeud<Integer> noeud = new Noeud<Integer>(2);
+		Noeud<Integer> noeud = new Noeud<Integer>(2, null);
 		noeud.getValeur().add(2);
 		noeud.getValeur().add(4);
 		
-		Noeud<Integer> noeudf1 = new Noeud<Integer>(2, noeud);
+		Noeud<Integer> noeudf1 = new Noeud<Integer>(2, noeud, null);
 		noeudf1.getValeur().add(1);
 		noeudf1.getValeur().add(2);
 		
-		Noeud<Integer> noeudf2 = new Noeud<Integer>(2, noeud);
+		Noeud<Integer> noeudf2 = new Noeud<Integer>(2, noeud, null);
 		noeudf2.getValeur().add(3);
 		noeudf2.getValeur().add(4);
 		
-		Noeud<Integer> noeudf3 = new Noeud<Integer>(2, noeud);
+		Noeud<Integer> noeudf3 = new Noeud<Integer>(2, noeud, null);
 		noeudf3.getValeur().add(5);
 		noeudf3.getValeur().add(6);
 
@@ -60,7 +60,7 @@ public class SplitRacine {
 		noeud.getPointeur().add(1, noeudf2);
 		noeud.getPointeur().add(2, noeudf3);
 		
-		Noeud<Integer> noeudf4 = new Noeud<Integer>(2, noeud);
+		Noeud<Integer> noeudf4 = new Noeud<Integer>(2, noeud, null);
 		noeudf4.getValeur().add(7);
 		noeudf4.getValeur().add(8);
 

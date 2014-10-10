@@ -8,10 +8,14 @@ public class Arbre<T extends Comparable<T>> {
 	private double taux = 0;
 
 	public Arbre(int ordre){
-		this.racine = new Noeud<T>(ordre);
+		this.racine = new Noeud<T>(ordre, this);
 		this.ordre = ordre;
 	}
 
+	public void setRacine(Noeud<T> noeud){
+		this.racine = noeud;
+	}
+	
 	public void ajouterData(T data) throws ObjectAlreadyExistsException, NoeudNonFeuilleException {
 		Noeud<T> noeud = this.racine.rechercheBonnePlace(data);
 		noeud.add(data);

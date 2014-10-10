@@ -14,15 +14,15 @@ public class SplitNonRacine {
 	@Test
 	public void splitOrdre2Feuille()
 	{
-		Noeud<Integer> noeud = new Noeud<Integer>(2);
+		Noeud<Integer> noeud = new Noeud<Integer>(2, null);
 		noeud.setFeuille(true);
 		noeud.getValeur().add(1);
 
-		Noeud<Integer> fils1 = new Noeud<>(2, noeud);
+		Noeud<Integer> fils1 = new Noeud<>(2, noeud, null);
 		fils1.getValeur().add(1);
 		fils1.setFeuille(true);
 		
-		Noeud<Integer> fils2 = new Noeud<>(2, noeud);
+		Noeud<Integer> fils2 = new Noeud<>(2, noeud, null);
 		fils2.getValeur().add(2);	
 		fils2.getValeur().add(3);	
 		fils2.getValeur().add(4);	

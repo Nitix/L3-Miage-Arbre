@@ -28,33 +28,36 @@ public class Noeud<T extends Comparable<T>> {
 	private boolean feuille;
 	private boolean racine;
 	private Noeud<T> pere;
+	private Arbre<T> arbre;
 
 	// Constructeur
-	public Noeud(int ordre){
+	public Noeud(int ordre, Arbre<T> arbre){
 		this.ordre = ordre;
 		this.racine = true;
 		this.feuille = true;
+		this.arbre = arbre;
 		this.id = NEXT_ID;
 		NEXT_ID++;
 	}
 
-	public Noeud(int ordre, Noeud<T> pere){
+	public Noeud(int ordre, Noeud<T> pere, Arbre<T> arbre){
 		this.ordre = ordre;
 		this.pere = pere;
 		this.feuille = false;
 		this.racine = false;
+		this.arbre = arbre;
 		this.id = NEXT_ID;
 		NEXT_ID++;
 	}
 
 	// Méthodes 
 	public void split(){
-		int nbvaleur = this.getOrdre() +1;
+		int nbvaleur = this.valeur.size();
 		int pair = nbvaleur % 2;
 
 		if(this.isRacine() == true){ //Cas ou je split la racine
-			Noeud<T> fils1 = new Noeud<T>(this.getOrdre(), this);
-			Noeud<T> fils2 = new Noeud<T>(this.getOrdre(), this);
+			Noeud<T> fils1 = new Noeud<T>(this.getOrdre(), this, this.arbre);
+			Noeud<T> fils2 = new Noeud<T>(this.getOrdre(), this, this.arbre);
 
 			if(this.isFeuille()){
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair);
@@ -84,7 +87,7 @@ public class Noeud<T extends Comparable<T>> {
 			fils1.checkSplit();
 			fils2.checkSplit();
 		}else{
-			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere);
+			Noeud<T> noeudFrere = new Noeud<T>(this.getOrdre(), this.pere, this.arbre);
 			T valeur = this.getValeur().get(nbvaleur/2-1+pair);
 			this.copierValeurDansNoeud(noeudFrere,nbvaleur/2+pair , nbvaleur);
 			if(!this.isFeuille()){
@@ -114,7 +117,7 @@ public class Noeud<T extends Comparable<T>> {
 		if(this.isFeuille()){
 			if(this.valeur.size() < (this.ordre+1)/2)
 				this.fusion();	
-		}else{
+		}else if(!this.racine){
 			if(this.pointeur.size() <(int) Math.round( (double)((this.ordre+1)/2)))
 				this.fusion();	
 		}
@@ -127,10 +130,19 @@ public class Noeud<T extends Comparable<T>> {
 			Noeud<T> brother;
 			if(index>0){
 				brother = this.pere.getPointeur().get(index-1);
+				if(!this.feuille){
+					Noeud<T> childOfBrother = brother.getPointeur().get(brother.getPointeur().size()-1);
+					brother.getValeur().add(childOfBrother.getValeur().get(childOfBrother.getValeur().size()-1));
+					this.copierPointeurDansNoeud(brother, 0, this.pointeur.size());
+				}
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size());
 				pere.getValeur().remove(index-1);
 			}else{
 				brother = this.pere.getPointeur().get(index+1);
+				if(!this.feuille){
+					this.valeur.add(this.pointeur.get(this.pointeur.size()-1).getValeur().get(this.pointeur.get(this.pointeur.size()-1).getValeur().size()-1));
+					this.copierPointeurDansNoeud(brother, 0, this.pointeur.size(), 0);
+				}
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size(), 0);
 				pere.getValeur().remove(index);
 			}
@@ -138,7 +150,15 @@ public class Noeud<T extends Comparable<T>> {
 			this.pere.getPointeur().remove(index);
 			pere.mettreAJourTauxDeRemplissage();
 			brother.checkSplit();
-			pere.checkFusion();
+			if(pere.isRacine()){
+				if(pere.getValeur().size() == 0){
+					arbre.setRacine(brother);
+					brother.setRacine(true);
+					brother.setPere(null);
+				}
+			}else{
+				pere.checkFusion();
+			}
 		}
 
 	}
@@ -175,6 +195,15 @@ public class Noeud<T extends Comparable<T>> {
 		}
 	}
 
+	private void copierPointeurDansNoeud(Noeud<T> noeud, int debut, int fin, int initialIndex){
+		for(int i = debut; i < fin; i++){
+			Noeud<T> filsOrigine = this.pointeur.get(i);
+			noeud.getPointeur().add(initialIndex, filsOrigine);
+			filsOrigine.setPere(noeud);
+			initialIndex++;
+		}
+	}
+	
 	public void addNoeud(int index, Noeud<T> noeud) {
 		this.pointeur.add(index, noeud);
 	}
@@ -329,7 +358,6 @@ public class Noeud<T extends Comparable<T>> {
 			}
 		}
 	}
-
 
 	private void remplaceOccurenceOf(T data, T t) {
 		int index = this.valeur.indexOf(data);
