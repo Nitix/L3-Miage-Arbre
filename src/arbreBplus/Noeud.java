@@ -3,8 +3,6 @@ package arbreBplus;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-//TODO FIXME Lors de la suppression il faut enlever les références de l'ancienne valeur des les noeuds non feuilles
-
 /**
  * Class Noeud permet de structurer l'arbre, un noued est chaque cellule d'un arbre. Il comporte une liste de valeurs, 
  * et une listes de pointeurs pour les noeuds fils
@@ -25,6 +23,7 @@ public class Noeud<T extends Comparable<T>> {
 	private double tauxremplissage = 0;
 	private ArrayList<T> valeur = new ArrayList<T>();
 	private ArrayList<Noeud<T>> pointeur = new ArrayList<Noeud<T>>();
+	private ArrayList<String> pointeurFichier = new ArrayList<>();
 	private boolean feuille;
 	private boolean racine;
 	private Noeud<T> pere;
@@ -50,28 +49,45 @@ public class Noeud<T extends Comparable<T>> {
 		NEXT_ID++;
 	}
 
+	public Noeud<T> rechercheBonnePlace(T data){ 
+		if(this.isFeuille())
+			return this;
+		for(int i = 0; i < this.valeur.size(); i++){
+			if(this.valeur.get(i).compareTo(data) >= 0){
+				return this.pointeur.get(i).rechercheBonnePlace(data);
+			}
+		}
+		return this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
+	}
+
 	// Méthodes 
 	public void split(){
 		int nbvaleur = this.valeur.size();
 		int pair = nbvaleur % 2;
-
+	
 		if(this.isRacine() == true){ //Cas ou je split la racine
 			Noeud<T> fils1 = new Noeud<T>(this.getOrdre(), this, this.arbre);
 			Noeud<T> fils2 = new Noeud<T>(this.getOrdre(), this, this.arbre);
-
+	
 			if(this.isFeuille()){
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair);
+				
 				fils1.setFeuille(true);
 				fils2.setFeuille(true);
+				
+				this.copierPointeurFichierDansNoeud(fils1, 0, nbvaleur/2+pair);
+				this.copierPointeurFichierDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
 			}else{
 				this.copierValeurDansNoeud(fils1, 0, nbvaleur/2+pair-1);
 			}
 			this.copierValeurDansNoeud(fils2, nbvaleur/2+pair, nbvaleur);
-
+	
 			T valeur = this.valeur.get(nbvaleur/2-1+pair);
 			this.valeur.clear();
 			this.valeur.add(valeur);
-
+	
+			this.pointeurFichier.clear();
+			
 			if(!this.feuille){
 				this.copierPointeurDansNoeud(fils1, 0, nbvaleur/2+pair);
 				this.copierPointeurDansNoeud(fils2, nbvaleur/2+pair, pointeur.size());
@@ -97,6 +113,8 @@ public class Noeud<T extends Comparable<T>> {
 			}else{
 				noeudFrere.setFeuille(true);
 				this.valeur.subList(nbvaleur/2+pair, nbvaleur).clear();
+				this.copierPointeurFichierDansNoeud(noeudFrere,nbvaleur/2+pair,nbvaleur);
+				this.pointeurFichier.subList(nbvaleur/2+pair,nbvaleur).clear();
 			}
 			this.mettreAJourTauxDeRemplissage();
 			pere.ajouter(noeudFrere, this, valeur); 
@@ -106,22 +124,6 @@ public class Noeud<T extends Comparable<T>> {
 			noeudFrere.checkSplit();
 		}
 		this.mettreAJourTauxDeRemplissage();
-	}
-
-	private void checkSplit() {
-		if(this.tauxremplissage > 1)
-			this.split();
-	}
-	
-	private void checkFusion(){
-		if(this.isFeuille()){
-			if(this.valeur.size() < (this.ordre+1)/2)
-				this.fusion();	
-		}else if(!this.racine){
-			if(this.pointeur.size() <(int) Math.round( (double)((this.ordre+1)/2)))
-				this.fusion();	
-		}
-		
 	}
 
 	public void fusion(){
@@ -134,6 +136,8 @@ public class Noeud<T extends Comparable<T>> {
 					Noeud<T> childOfBrother = brother.getPointeur().get(brother.getPointeur().size()-1);
 					brother.getValeur().add(childOfBrother.getValeur().get(childOfBrother.getValeur().size()-1));
 					this.copierPointeurDansNoeud(brother, 0, this.pointeur.size());
+				}else{
+					this.copierPointeurFichierDansNoeud(brother, 0, this.getPointeurFichier().size());					
 				}
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size());
 				pere.getValeur().remove(index-1);
@@ -142,6 +146,8 @@ public class Noeud<T extends Comparable<T>> {
 				if(!this.feuille){
 					this.valeur.add(this.pointeur.get(this.pointeur.size()-1).getValeur().get(this.pointeur.get(this.pointeur.size()-1).getValeur().size()-1));
 					this.copierPointeurDansNoeud(brother, 0, this.pointeur.size(), 0);
+				}else{
+					this.copierPointeurFichierDansNoeud(brother, 0, this.getPointeurFichier().size());					
 				}
 				this.copierValeurDansNoeud(brother, 0, this.getValeur().size(), 0);
 				pere.getValeur().remove(index);
@@ -163,14 +169,78 @@ public class Noeud<T extends Comparable<T>> {
 
 	}
 
+	public void mettreAJourTauxDeRemplissage() {
+		this.tauxremplissage = (double) this.valeur.size() / this.ordre;
+	}
+
+	public void add(T data, String file) throws ObjectAlreadyExistsException, NoeudNonFeuilleException{
+		if(this.valeur.contains(data))
+			throw new ObjectAlreadyExistsException();
+		boolean trouve = false;
+		for(int i = 0; i < this.valeur.size(); i++){
+			if(this.valeur.get(i).compareTo(data) >= 0){
+				trouve = true;
+				if(!this.isFeuille()){
+					throw new NoeudNonFeuilleException();
+				}
+					this.valeur.add(i, data);
+					this.pointeurFichier.add(i, file);
+					this.mettreAJourTauxDeRemplissage();
+					this.checkSplit();				
+				break;
+			}
+		}
+		if(!trouve){
+			if(this.isFeuille()){
+				this.valeur.add(data);
+				this.pointeurFichier.add(file);
+				this.mettreAJourTauxDeRemplissage();
+				this.checkSplit();
+			}else{
+				throw new NoeudNonFeuilleException();
+			}
+		}
+	}
+
+	public void addNoeud(int index, Noeud<T> noeud) {
+		this.pointeur.add(index, noeud);
+	}
+
 	private void ajouter(Noeud<T> noeudfils, Noeud<T> noeudfilsorigine, T valeur) {
 		int index = this.pointeur.indexOf(noeudfilsorigine);
 		this.valeur.add(index, valeur);  
 		this.pointeur.add(index+1, noeudfils);
 	}
 
+
+	public void remove(T data) throws NoeudNonFeuilleException{
+		if(!this.isFeuille()){
+			throw new NoeudNonFeuilleException();
+		}
+		int index = this.valeur.indexOf(data);
+		if(index != -1){
+			this.valeur.remove(index);
+			this.pointeurFichier.remove(index);
+			if(index != 0){
+				pere.remplaceOccurenceOf(data, this.valeur.get(index-1));
+			}
+			this.mettreAJourTauxDeRemplissage();
+			this.checkFusion();
+		}
+	}
+
 	private void supprimerPointeur(int debut, int fin){
 		this.pointeur.subList(debut, fin).clear();
+	}
+
+	private void remplaceOccurenceOf(T data, T t) {
+		int index = this.valeur.indexOf(data);
+		if(index  != -1){
+			this.valeur.remove(index);
+			this.valeur.add(index, t);
+		}
+		if(!this.racine)
+			pere.remplaceOccurenceOf(data, t);
 	}
 
 	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin){
@@ -180,13 +250,14 @@ public class Noeud<T extends Comparable<T>> {
 	}
 	
 	
-	public void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin, int initialIndex) {
+	private void copierValeurDansNoeud(Noeud<T> noeud, int debut, int fin, int initialIndex) {
 		for(int i = debut; i < fin; i++){
 			noeud.getValeur().add(initialIndex, this.valeur.get(i));
 			initialIndex++;
 		}
 	}
-
+	
+	
 	private void copierPointeurDansNoeud(Noeud<T> noeud, int debut, int fin){
 		for(int i = debut; i < fin; i++){
 			Noeud<T> filsOrigine = this.pointeur.get(i);
@@ -203,13 +274,45 @@ public class Noeud<T extends Comparable<T>> {
 			initialIndex++;
 		}
 	}
+
+	private void copierPointeurFichierDansNoeud(Noeud<T> noeud, int debut, int fin){
+		for(int i = debut; i < fin; i++){
+			noeud.getPointeurFichier().add(this.pointeurFichier.get(i));
+		}
+	}
 	
-	public void addNoeud(int index, Noeud<T> noeud) {
-		this.pointeur.add(index, noeud);
+
+	private void copierPointeurFichierDansNoeud(Noeud<T> noeud, int debut, int fin, int initialIndex) {
+		for(int i = debut; i < fin; i++){
+			if(i == this.pointeurFichier.size())
+				System.out.println("nope");
+			noeud.getPointeurFichier().add(initialIndex, this.pointeurFichier.get(i));
+			initialIndex++;
+		}
 	}
 
-	public void mettreAJourTauxDeRemplissage() {
-		this.tauxremplissage = (double) this.valeur.size() / this.ordre;
+
+	private void checkSplit() {
+		if(this.tauxremplissage > 1)
+			this.split();
+	}
+
+	private void checkFusion(){
+		if(this.isFeuille()){
+			if(this.valeur.size() < (this.ordre+1)/2)
+				this.fusion();	
+		}else if(!this.racine){
+			if(this.pointeur.size() <(int) Math.round( (double)((this.ordre+1)/2)))
+				this.fusion();	
+		}
+		
+	}
+
+	public void getTauxRecursive(Taux taux) {
+		for(int i = 0; i < this.pointeur.size(); i++){
+			this.pointeur.get(i).getTauxRecursive(taux);
+		}
+		taux.addTaux(tauxremplissage);
 	}
 
 	public int getID(){
@@ -273,12 +376,24 @@ public class Noeud<T extends Comparable<T>> {
 		this.pere = pere;
 	}
 
-	public void recursiveToString(){
-		System.out.println(this.toString());
-		Iterator<Noeud<T>> it = this.pointeur.iterator();
-		while(it.hasNext()){
-			it.next().recursiveToString();
+	
+	public ArrayList<String> getPointeurFichier() {
+		return pointeurFichier;
+	}
+
+	public void setPointeurFichier(ArrayList<String> pointeurFichier) {
+		this.pointeurFichier = pointeurFichier;
+	}
+	
+	public String getNomFichier(T data) throws NoeudNonFeuilleException, NonExistentObjectException {
+		if(!this.isFeuille()){
+			throw new NoeudNonFeuilleException();
 		}
+		int index = this.valeur.indexOf(data);
+		if(index == -1){
+			throw new NonExistentObjectException();
+		}
+		return this.pointeurFichier.get(index);
 	}
 
 	@Override
@@ -298,85 +413,27 @@ public class Noeud<T extends Comparable<T>> {
 			res.append(" | ");
 			res.append("@"+j.next().getID());
 		}
+		Iterator<String> fichier = this.pointeurFichier.iterator();
+		if(fichier.hasNext()){
+			res.append(fichier.next());
+		}
+		while(fichier.hasNext()){
+			res.append(" | ");
+			res.append(fichier.next());
+		}
 		res.append("  --- T = ");
 		res.append(this.tauxremplissage);
 		return res.toString();
 	}
 
-	public void add(T data) throws ObjectAlreadyExistsException, NoeudNonFeuilleException{
-		if(this.valeur.contains(data))
-			throw new ObjectAlreadyExistsException();
-		boolean trouve = false;
-		for(int i = 0; i < this.valeur.size(); i++){
-			if(this.valeur.get(i).compareTo(data) >= 0){
-				trouve = true;
-				if(this.isFeuille()){
-					this.valeur.add(i, data);
-					this.mettreAJourTauxDeRemplissage();
-					this.checkSplit();
-				}else{
-					throw new NoeudNonFeuilleException();
-				}
-				break;
-			}
-		}
-		if(!trouve){
-			if(this.isFeuille()){
-				this.valeur.add(data);
-				this.mettreAJourTauxDeRemplissage();
-				this.checkSplit();
-			}else{
-				throw new NoeudNonFeuilleException();
-			}
-		}
-	}
-	
-	public Noeud<T> rechercheBonnePlace(T data){ //FIXME une seule méthode de recherche pour la méthode ajout/supp
-		if(this.isFeuille())
-			return this;
-		for(int i = 0; i < this.valeur.size(); i++){
-			if(this.valeur.get(i).compareTo(data) >= 0){
-				return this.pointeur.get(i).rechercheBonnePlace(data);
-			}
-		}
-		return this.pointeur.get(this.pointeur.size()-1).rechercheBonnePlace(data);
-	}
-	
-	public void remove(T data) throws NoeudNonFeuilleException{
-		for(int i = 0; i < this.valeur.size(); i++){
-			if(this.valeur.get(i).compareTo(data) == 0){
-				if(this.isFeuille()){
-					this.valeur.remove(i);
-					if(i != 0){
-						pere.remplaceOccurenceOf(data, this.valeur.get(i-1));
-					}
-					this.mettreAJourTauxDeRemplissage();
-					this.checkFusion();
-				}else{
-					throw new NoeudNonFeuilleException();
-				}
-			}
+	public void recursiveToString(){
+		System.out.println(this.toString());
+		Iterator<Noeud<T>> it = this.pointeur.iterator();
+		while(it.hasNext()){
+			it.next().recursiveToString();
 		}
 	}
 
-	private void remplaceOccurenceOf(T data, T t) {
-		int index = this.valeur.indexOf(data);
-		if(index  != -1){
-			this.valeur.remove(index);
-			this.valeur.add(index, t);
-		}
-		if(!this.racine)
-			pere.remplaceOccurenceOf(data, t);
-	}
-
-	public void getTauxRecursive(Taux taux) {
-		for(int i = 0; i < this.pointeur.size(); i++){
-			this.pointeur.get(i).getTauxRecursive(taux);
-		}
-		taux.addTaux(tauxremplissage);
-	}
-
-	
 	private void debug(){
 		if(this.isRacine())
 			this.recursiveToString();
