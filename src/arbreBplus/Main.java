@@ -27,7 +27,7 @@ public class Main {
 		Arbre<Integer> age = new Arbre<>(ordre);
 		Arbre<String> nom = new Arbre<>(ordre);
 
-		System.out.println("Inserer le nom de dossier dans lesquels sont contenus vos valeurs.");
+		System.out.println("Inserer le nom du dossier dans lesquels sont contenus vos valeurs.");
 		String dossierString = sc.next();
 		try {
 			final File dossier = new File(dossierString);
