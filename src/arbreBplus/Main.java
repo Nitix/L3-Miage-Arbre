@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class Main {
@@ -32,7 +35,10 @@ public class Main {
 		try {
 			final File dossier = new File(dossierString);
 			if(dossier.isDirectory()){
-				for(File file : dossier.listFiles()){
+				int nombreDeFichiers = dossier.list().length;
+				int nombreActuel = 1;
+				while(nombreActuel <= nombreDeFichiers){
+					File file = new File(dossierString + File.separator + "F"+nombreActuel+".txt"); 
 					if(file.isFile()){
 						FileReader fis = new FileReader(file.getAbsoluteFile());
 						BufferedReader br = new BufferedReader(fis);
@@ -54,6 +60,7 @@ public class Main {
 						}
 						br.close();
 					}
+					nombreActuel++;
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -161,23 +168,78 @@ public class Main {
 					System.out.println("Age à supprimer : ");
 					Integer valsupp = sc.nextInt();
 					try {
-						age.supprimerData(valsupp);
+						String fileName = age.supprimerData(valsupp);
+						File file = new File(dossierString + File.separator + fileName);
+						
+						FileReader fis = new FileReader(file.getAbsoluteFile());
+						BufferedReader br = new BufferedReader(fis);
+						String text;
+						while((text= br.readLine()) != null){
+							text = text.trim();
+							String[] info = text.split(":");
+							String type = info[0].toLowerCase();
+							if(type.equals("nom")){
+								nom.supprimerData(info[1]);
+							}									
+						}
+						
 						System.out.println(valsupp + "supprime");
 					} catch (NoeudNonFeuilleException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NonExistentObjectException e) {
+						System.out.println(age + "nest oas dans l'arbre B+");
+						e.printStackTrace();
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}else{
 					System.out.println("Nom à supprimer : ");
-					sc.nextLine();
-					String valsupp = sc.nextLine();
+					String valsupp = sc.next();
 					try {
-						nom.supprimerData(valsupp);
+						String fileName = nom.supprimerData(valsupp);
+						File file = new File(dossierString + File.separator + fileName);
+						
+						FileReader fis = new FileReader(file.getAbsoluteFile());
+						BufferedReader br = new BufferedReader(fis);
+						String text;
+						while((text= br.readLine()) != null){
+							try {
+								text = text.trim();
+								String[] info = text.split(":");
+								String type = info[0].toLowerCase();
+								if(type.equals("age")){
+										Integer data = Integer.parseInt(info[1]);
+										age.ajouterData(data, file.getName());
+								}								
+							} catch (ObjectAlreadyExistsException | NoeudNonFeuilleException e) {
+								System.out.println("Valeur déjà existante.");
+							}
+						}
 						System.out.println(valsupp + "supprime");
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}					
+					} catch (NonExistentObjectException e) {
+						System.out.println(nom + "nest oas dans l'arbre B+");
+						e.printStackTrace();
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}			
 				}
 				break;
 			case 4 : 
@@ -190,7 +252,7 @@ public class Main {
 	public static void resultatRecherche(String fichier, String dossier, Scanner sc){
 		System.out.println("Fichier (ligne) :" + fichier);
 		System.out.println("Lire le fichier ? (O/n)");
-		if(sc.nextLine().equals("n")){
+		if(!sc.next().equals("n")){
 			try {
 				File file = new File(dossier + File.separator + fichier);
 				FileReader fis = new FileReader(file.getAbsoluteFile());

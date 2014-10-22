@@ -18,9 +18,11 @@ public class Arbre<T extends Comparable<T>> {
 		noeud.add(data, file);
 	}
 
-	public void supprimerData(T data) throws NoeudNonFeuilleException {
+	public String supprimerData(T data) throws NoeudNonFeuilleException, NonExistentObjectException {
 		Noeud<T> noeud = this.racine.rechercheBonnePlace(data);
+		String file = noeud.getNomFichier(data);
 		noeud.remove(data);
+		return file;
 	}
 	
 	public String getNomFichier(T data) throws NoeudNonFeuilleException, NonExistentObjectException {
