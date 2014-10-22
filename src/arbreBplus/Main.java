@@ -4,11 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.util.InputMismatchException;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Main {
@@ -168,7 +165,6 @@ public class Main {
 					System.out.println("Age a supprimer : ");
 					Integer valsupp = sc.nextInt();
 					try {
-<<<<<<< HEAD
 						String fileName = age.supprimerData(valsupp);
 						File file = new File(dossierString + File.separator + fileName);
 						
@@ -184,11 +180,7 @@ public class Main {
 							}									
 						}
 						
-						System.out.println(valsupp + "supprime");
-=======
-						age.supprimerData(valsupp);
 						System.out.println(valsupp + " a été supprimé.");
->>>>>>> branch 'master' of git@github.com:Yhugo/L3-Miage-Arbre.git
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -209,7 +201,6 @@ public class Main {
 					System.out.println("Nom à supprimer : ");
 					String valsupp = sc.next();
 					try {
-<<<<<<< HEAD
 						String fileName = nom.supprimerData(valsupp);
 						File file = new File(dossierString + File.separator + fileName);
 						
@@ -229,16 +220,12 @@ public class Main {
 								System.out.println("Valeur déjà existante.");
 							}
 						}
-						System.out.println(valsupp + "supprime");
-=======
-						nom.supprimerData(valsupp);
 						System.out.println(valsupp + " a été supprimé.");
->>>>>>> branch 'master' of git@github.com:Yhugo/L3-Miage-Arbre.git
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (NonExistentObjectException e) {
-						System.out.println(nom + "nest oas dans l'arbre B+");
+						System.out.println(nom + "n'est pas dans l'arbre B+");
 						e.printStackTrace();
 					} catch (FileNotFoundException e1) {
 						// TODO Auto-generated catch block
