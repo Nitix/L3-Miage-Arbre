@@ -145,6 +145,8 @@ public class Main {
 			case 2 :
 				age.recursiveToString();
 				System.out.println("Taux de remplissage : " + age.calculTaux());
+				System.out.println("---------------------------------------------------------------------");
+				System.out.println("---------------------------------------------------------------------");
 				nom.recursiveToString();
 				System.out.println("Taux de remplissage : " + nom.calculTaux());				
 				break;
@@ -214,9 +216,9 @@ public class Main {
 								String type = info[0].toLowerCase();
 								if(type.equals("age")){
 										Integer data = Integer.parseInt(info[1]);
-										age.ajouterData(data, file.getName());
+										age.supprimerData(data);
 								}								
-							} catch (ObjectAlreadyExistsException | NoeudNonFeuilleException e) {
+							} catch (NoeudNonFeuilleException e) {
 								System.out.println("Valeur déjà existante.");
 							}
 						}
