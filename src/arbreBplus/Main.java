@@ -180,8 +180,7 @@ public class Main {
 							if(type.equals("nom")){
 								nom.supprimerData(info[1]);
 							}									
-						}
-						
+						}						
 						System.out.println(valsupp + " a été supprimé.");
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
