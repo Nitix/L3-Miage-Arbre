@@ -21,16 +21,16 @@ public class Main {
 			try{
 				ordre = sc.nextInt();
 				if(ordre < 1)
-					System.out.println("Erreur, nombre entier trop petit");
+					System.out.println("Erreur, nombre entier trop petit.");
 			}catch(InputMismatchException e){
-				System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif");
+				System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif.");
 				sc.next();
 			}
 		}
 		Arbre<Integer> age = new Arbre<>(ordre);
 		Arbre<String> nom = new Arbre<>(ordre);
 
-		System.out.println("Inserer le nom de dossier dans lesquels sont contenus vos valeurs.");
+		System.out.println("Inserer le nom du dossier dans lesquels sont contenus vos valeurs.");
 		String dossierString = sc.next();
 		try {
 			final File dossier = new File(dossierString);
@@ -66,11 +66,11 @@ public class Main {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur lors de la lecture d'un fichier, Fichier introuvable");
+			System.out.println("Erreur lors de la lecture d'un fichier, Fichier introuvable.");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur lors de la lecture d'un fichier, vérifiez les droits d'accès et l'intégralité du fichier");
+			System.out.println("Erreur lors de la lecture d'un fichier, vérifiez les droits d'accès et l'intégralité du fichier.");
 
 		}	
 
@@ -87,29 +87,29 @@ public class Main {
 				try{
 					choix = sc.nextInt();
 					if(choix > 4 && choix < 1)
-						System.out.println("Erreur, le numero doit etre entre 1 et 4");
+						System.out.println("Erreur, le numero doit etre entre 1 et 4.");
 				}catch(InputMismatchException e){
-					System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier");
+					System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier.");
 					sc.next();
 				}
 			}
 			switch(choix){
 			case 1 : 
-				System.out.println("Rechercher à partir de : 1)Age 2) Nom");
+				System.out.println("Rechercher à partir de : 1) Age 	2) Nom");
 				int selection = -1;
 				while(selection > 2 || selection < 1){
 					try{
 						selection = sc.nextInt();
 						if(selection > 2 || selection < 1)
-							System.out.println("Erreur, le numero doit etre entre 1 et 2");
+							System.out.println("Erreur, le numero doit être entre 1 et 2.");
 					}catch(InputMismatchException e){
-						System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif");
+						System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif.");
 						sc.next();
 					}
 				}
 				String fichier;
 				if(selection == 1){
-					System.out.println("Donner l'age recherché");
+					System.out.println("Donner l'âge recherché :");
 					boolean ok =  false;
 					int ageRecherche = 0;
 					while(!ok){
@@ -117,7 +117,7 @@ public class Main {
 							ageRecherche= sc.nextInt();
 							ok = true;
 						}catch(InputMismatchException e){
-							System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier");
+							System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier.");
 							sc.next();
 						}
 					}
@@ -125,23 +125,23 @@ public class Main {
 						fichier = age.getNomFichier(ageRecherche);
 						resultatRecherche(fichier, dossierString, sc);
 					} catch (NoeudNonFeuilleException e) {
-						System.out.println("Le programme a essayé de récupérer la valeur dans un noued non feuille");
+						System.out.println("Le programme a essayé de récupérer la valeur dans un noued non feuille.");
 						e.printStackTrace();
 					} catch (NonExistentObjectException e) {
-						System.out.println("La valeur n'existe pas");
+						System.out.println("La valeur n'existe pas.");
 					}
 				}else{
-					System.out.println("Donner le nom recherche");
+					System.out.println("Donner le nom recherché :");
 					sc.nextLine();
 					String nomRecherche = sc.nextLine();
 					try {
 						fichier = nom.getNomFichier(nomRecherche);
 						resultatRecherche(fichier, dossierString, sc);
 					} catch (NoeudNonFeuilleException e) {
-						System.out.println("Le programme a essayé de récupérer la valeur dans un noued non feuille");
+						System.out.println("Le programme a essayé de récupérer la valeur dans un noued non feuille.");
 						e.printStackTrace();
 					} catch (NonExistentObjectException e) {
-						System.out.println("La valeur n'existe pas");
+						System.out.println("La valeur n'existe pas.");
 					}
 				}
 				break;
@@ -152,22 +152,23 @@ public class Main {
 				System.out.println("Taux de remplissage : " + nom.calculTaux());				
 				break;
 			case 3 :
-				System.out.println("Supprimer à partir de : 1)Age 2) Nom");
+				System.out.println("Supprimer à partir de : 1) Age 	2) Nom");
 				selection = -1;
 				while(selection > 2 || selection < 1){
 					try{
 						selection = sc.nextInt();
 						if(selection > 2 || selection < 1)
-							System.out.println("Erreur, le numero doit etre entre 1 et 2");
+							System.out.println("Erreur, le numero doit etre entre 1 et 2.");
 					}catch(InputMismatchException e){
-						System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif");
+						System.out.println("Erreur, ce n'est pas un nombre entier, donner un nombre entier positif.");
 						sc.next();
 					}
 				}
 				if(selection == 1){
-					System.out.println("Age à supprimer : ");
+					System.out.println("Age a supprimer : ");
 					Integer valsupp = sc.nextInt();
 					try {
+<<<<<<< HEAD
 						String fileName = age.supprimerData(valsupp);
 						File file = new File(dossierString + File.separator + fileName);
 						
@@ -184,6 +185,10 @@ public class Main {
 						}
 						
 						System.out.println(valsupp + "supprime");
+=======
+						age.supprimerData(valsupp);
+						System.out.println(valsupp + " a été supprimé.");
+>>>>>>> branch 'master' of git@github.com:Yhugo/L3-Miage-Arbre.git
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -204,6 +209,7 @@ public class Main {
 					System.out.println("Nom à supprimer : ");
 					String valsupp = sc.next();
 					try {
+<<<<<<< HEAD
 						String fileName = nom.supprimerData(valsupp);
 						File file = new File(dossierString + File.separator + fileName);
 						
@@ -224,6 +230,10 @@ public class Main {
 							}
 						}
 						System.out.println(valsupp + "supprime");
+=======
+						nom.supprimerData(valsupp);
+						System.out.println(valsupp + " a été supprimé.");
+>>>>>>> branch 'master' of git@github.com:Yhugo/L3-Miage-Arbre.git
 					} catch (NoeudNonFeuilleException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -263,10 +273,10 @@ public class Main {
 				}
 				br.close();
 			} catch (FileNotFoundException e1) {
-				System.out.println("Fichier manquant, base de données corrompues");
+				System.out.println("Fichier manquant, base de données corrompue.");
 				e1.printStackTrace();
 			} catch (IOException e) {
-				System.out.println("Erreur de lecture");
+				System.out.println("Erreur de lecture.");
 				e.printStackTrace();
 			}
 		}
